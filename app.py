@@ -1,19 +1,27 @@
-from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
+import pandas as pd
+import time
 import os
 import random
 from time import sleep
 import schedule
 
-
 def buscar_precos():
     # 0 - Abrir o navegador
     print('passei aqui')
-    driver = webdriver.Chrome(
-        executable_path=os.getcwd() + os.sep + 'chromedriver.exe')
+    options = Options()
+    options.add_argument("start-maximized")
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    chrome_options = webdriver.ChromeOptions()
     print('definido chromedriver')
     # 1 - Naveguei até o site(url)
     driver.get('https://www.mercadolivre.com.br')
+
+
     # 2 - Pesquisar por produto
     sleep(random.randint(3, 5))
     campo_pesquisa = driver.find_element_by_xpath(
@@ -50,8 +58,7 @@ def buscar_precos():
         # 5 - Navegar até o próxima página
         try:
             sleep(random.randint(3, 5))
-            driver.execute_script(
-                'window.scrollTo(0,document.body.scrollHeight);')
+            driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
             botao_proximo = driver.find_element_by_xpath(
                 "//li[@class='andes-pagination__button andes-pagination__button--next']")
             sleep(random.randint(3, 5))
@@ -60,8 +67,11 @@ def buscar_precos():
             pass
 
 
-# 6 - Agendar a execução!
-schedule.every().thursday.at('07:00').do(buscar_precos)
-while True:
-    schedule.run_pending()
-    sleep(1)
+buscar_precos()
+
+
+# # 6 - Agendar a execução!
+# schedule.every().thursday.at('07:00').do(buscar_precos)
+# while True:
+#     schedule.run_pending()
+#     sleep(1)
